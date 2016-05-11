@@ -1,9 +1,9 @@
 /**
  * angular-virtual-keyboard
- * An AngularJs Virtual Keyboard Interface based on GreyWyvern VKI
- * @version v0.4.3
+ * An AngularJs Virtual Keyboard Interface based on GreyWyvern VKI forked to the-darc
+ * @version v0.4.3.1
  * @author the-darc <darc.tec@gmail.com>
- * @link https://github.com/the-darc/angular-virtual-keyboard
+ * @link https://github.com/Darkan35/angular-virtual-keyboard
  * @license MIT
  */
 (function (angular) {
@@ -1019,7 +1019,17 @@ angular.module('angular-virtual-keyboard', [])
 				[['Shift', 'Shift'], ['z', 'Z', '\u00e6', '\u00c6'], ['x', 'X'], ['c', 'C', '\u00a9', '\u00a2'], ['v', 'V'], ['b', 'B'], ['n', 'N', '\u00f1', '\u00d1'], ['m', 'M', '\u00b5'], [',', '<', '\u00e7', '\u00c7'], ['.', '>'], ['/', '?', '\u00bf'], ['Shift', 'Shift']],
 				[[' ', ' ', ' ', ' '], ['Alt', 'Alt']]
 			],
-		'lang': ['en'] }
+		'lang': ['en']
+		},
+		'Fran\u00e7ais' :{
+			'name': "French", 'keys': [
+				[["\u00b2", "\u00b3"], ["&", "1"], ["\u00e9", "2", "~"], ['"', "3", "#"], ["'", "4", "{"], ["(", "5", "["], ["-", "6", "|"], ["\u00e8", "7", "`"], ["_", "8", "\\"], ["\u00e7", "9", "^"], ["\u00e0", "0", "@"], [")", "\u00b0", "]"], ["=", "+", "}"], ["Bksp", "Bksp"]],
+				[["Tab", "Tab"], ["a", "A"], ["z", "Z"], ["e", "E", "\u20ac"], ["r", "R"], ["t", "T"], ["y", "Y"], ["u", "U"], ["i", "I"], ["o", "O"], ["p", "P"], ["^", "\u00a8"], ["$", "\u00a3", "\u00a4"], ["*", "\u03bc"]],
+				[["Caps", "Caps"], ["q", "Q"], ["s", "S"], ["d", "D"], ["f", "F"], ["g", "G"], ["h", "H"], ["j", "J"], ["k", "K"], ["l", "L"], ["m", "M"], ["\u00f9", "%"], ["Enter", "Enter"]],
+				[["Shift", "Shift"], ["<", ">"], ["w", "W"], ["x", "X"], ["c", "C"], ["v", "V"], ["b", "B"], ["n", "N"], [",", "?"], [";", "."], [":", "/"], ["!", "\u00a7"], ["Shift", "Shift"]],
+				[[" ", " ", " ", " "], ["AltGr", "AltGr"]]
+			], 'lang': ["fr"]
+		}
 	},
 	// deadkey
 	'deadkey': {
@@ -1070,7 +1080,8 @@ angular.module('angular-virtual-keyboard', [])
 	},
 	relative: true,
 	sizeAdj: true,
-	customClass: false
+	customClass: false,
+	isEnabled: false
 })
 .service('ngVirtualKeyboardService', ['VKI_CONFIG', function(VKI_CONFIG) {
 	/*globals VKI */
@@ -1083,6 +1094,9 @@ angular.module('angular-virtual-keyboard', [])
 			config.keyCenter = config.keyCenter || VKI_CONFIG.keyCenter;
 			config.sizeAdj = config.sizeAdj === false ? false : VKI_CONFIG.sizeAdj;
 			config.customClass = config.customClass || VKI_CONFIG.customClass;
+			if(!VKI_CONFIG.isEnabled){
+				return;
+			}
 
 			var vki = new VKI(config, VKI_CONFIG.layout, VKI_CONFIG.deadkey, inputCallback);
 			vki.attachVki(element);
@@ -1114,6 +1128,11 @@ angular.module('angular-virtual-keyboard', [])
 				if (isMobile && scope.config.showInMobile !== true) {
 					return;
 				}
+			}
+
+			//Don't show virtualKeyabord if isEnabled is falsy;
+			if ($injector.has('isEnabled') && ! $injector.get('isEnabled') ) {
+				return;
 			}
 
 			ngVirtualKeyboardService.attach(elements[0], scope.config, function() {

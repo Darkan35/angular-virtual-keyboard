@@ -1,25 +1,9 @@
 angular-virtual-keyboard
 ========================
-[![npm version](https://badge.fury.io/js/angular-virtual-keyboard.svg)](http://badge.fury.io/js/angular-virtual-keyboard)
-[![Bower version](https://badge.fury.io/bo/angular-virtual-keyboard.svg)](http://badge.fury.io/bo/angular-virtual-keyboard)
 
 An AngularJs Virtual Keyboard Interface based on [GreyWyvern VKI](http://www.greywyvern.com/code/javascript/keyboard). See example in the [Demo page](http://the-darc.github.io/angular-virtual-keyboard).
 
 ![Demo image](http://the-darc.github.io/angular-virtual-keyboard/images/demo.png)
-
-## Install
-
-### With bower
-
-```sh
-$ bower install angular-virtual-keyboard
-```
-
-### With npm
-
-```sh
-$ npm install angular-virtual-keyboard
-```
 
 ## Dependencies
 
@@ -53,6 +37,7 @@ The angular-virtual-keyboard module use an [Angular.js Constant](https://docs.an
  - __Adjust keyboard size__ ``VKI_CONFIG.sizeAdj`` Allow user to adjust keyboard size. _Default: ``true``_
  - __i18n configuration__ ``VKI_CONFIG.i18n`` An array to replace the default labels of the keyboard interface. See example below:
  - __Custom CSS Class__ ``VKI_CONFIG.customClass`` A CSS class name to add in the first html element of the keyboard
+ - __Enabled__ ``VKI_CONFIG.isEnabled`` activate of not virtual keyboard with config variable
 ```javascript
 VKI_CONFIG.i18n = {
 	'00': "Exibir teclado numérico",
@@ -69,6 +54,8 @@ VKI_CONFIG.i18n = {
 	'11': "Aumentar tamanho do teclado"
 };
 ```
+
+
 
 ### Directive instance configurations
 
