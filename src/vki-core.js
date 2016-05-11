@@ -51,7 +51,7 @@
  *
  */
 
-var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
+var VKI = function(customConfig, layout, deadKeys, keyInputCallback, scope) {
   var self = this;
   var config = customConfig || {};
   self.keyInputCallback = keyInputCallback || function(){};
@@ -91,6 +91,8 @@ var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
 
   /* ***** i18n text strings ************************************* */
   this.VKI_i18n = config.i18n;
+
+  this.VKI_scope = scope;
 
 
   /* ***** Create keyboards ************************************** */
@@ -776,6 +778,9 @@ var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
    *
    */
   this.VKI_show = function(elem) {
+
+    this.VKI_scope.$broadcast('keyboardShow', true);
+
     if (!this.VKI_target) {
       this.VKI_target = elem;
       if (this.VKI_langAdapt && this.VKI_target.lang) {
@@ -906,6 +911,8 @@ var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
       }
       if (keepFocus) {
         this.VKI_target.focus();
+      }else{
+        this.VKI_scope.$broadcast('keyboardShow', false);
       }
       if (this.VKI_isIE) {
         setTimeout(function() { self.VKI_target = false; }, 0);

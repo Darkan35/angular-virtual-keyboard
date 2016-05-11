@@ -74,6 +74,13 @@ The ``ng-virtual-keyboard`` could receive an array with the configurations that 
  - __Adjust keyboard size__ ``sizeAdj`` Allow user to adjust keyboard size. _Default: ``true``_
  - __Custom CSS Class__ ``customClass`` A CSS class name to add in the first html element of the keyboard
 
+### $watch variable is keyboard is show
+``keyboardShow true or false``
+```javascript
+$scope.$on('keyboardShow', function(event, args) {
+    //some element
+}
+```
 ### Example of use
 
 _See example in the [Demo page](http://the-darc.github.io/angular-virtual-keyboard) or the [demo code](https://github.com/the-darc/angular-virtual-keyboard/blob/master/demo/index.html)_

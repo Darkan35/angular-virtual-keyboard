@@ -1,7 +1,7 @@
 /**
  * angular-virtual-keyboard
  * An AngularJs Virtual Keyboard Interface based on GreyWyvern VKI forked to the-darc
- * @version v0.4.3.1
+ * @version v0.4.4
  * @author the-darc <darc.tec@gmail.com>
  * @link https://github.com/Darkan35/angular-virtual-keyboard
  * @license MIT
@@ -61,7 +61,7 @@
  *
  */
 
-var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
+var VKI = function(customConfig, layout, deadKeys, keyInputCallback, scope) {
   var self = this;
   var config = customConfig || {};
   self.keyInputCallback = keyInputCallback || function(){};
@@ -101,6 +101,8 @@ var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
 
   /* ***** i18n text strings ************************************* */
   this.VKI_i18n = config.i18n;
+
+  this.VKI_scope = scope;
 
 
   /* ***** Create keyboards ************************************** */
@@ -786,6 +788,9 @@ var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
    *
    */
   this.VKI_show = function(elem) {
+
+    this.VKI_scope.$broadcast('keyboardShow', true);
+
     if (!this.VKI_target) {
       this.VKI_target = elem;
       if (this.VKI_langAdapt && this.VKI_target.lang) {
@@ -916,6 +921,8 @@ var VKI = function(customConfig, layout, deadKeys, keyInputCallback) {
       }
       if (keepFocus) {
         this.VKI_target.focus();
+      }else{
+        this.VKI_scope.$broadcast('keyboardShow', false);
       }
       if (this.VKI_isIE) {
         setTimeout(function() { self.VKI_target = false; }, 0);
@@ -1011,8 +1018,8 @@ angular.module('angular-virtual-keyboard', [])
 	/*jshint maxlen:500 */
 	// layout
 	'layout': {
-		'US International': {
-			'name': 'US International', 'keys': [
+		'english': {
+			'name': 'english', 'keys': [
 				[['`', '~'], ['1', '!', '\u00a1', '\u00b9'], ['2', '@', '\u00b2'], ['3', '#', '\u00b3'], ['4', '$', '\u00a4', '\u00a3'], ['5', '%', '\u20ac'], ['6', '^', '\u00bc'], ['7', '&', '\u00bd'], ['8', '*', '\u00be'], ['9', '(', '\u2018'], ['0', ')', '\u2019'], ['-', '_', '\u00a5'], ['=', '+', '\u00d7', '\u00f7'], ['Bksp', 'Bksp']],
 				[['Tab', 'Tab'], ['q', 'Q', '\u00e4', '\u00c4'], ['w', 'W', '\u00e5', '\u00c5'], ['e', 'E', '\u00e9', '\u00c9'], ['r', 'R', '\u00ae'], ['t', 'T', '\u00fe', '\u00de'], ['y', 'Y', '\u00fc', '\u00dc'], ['u', 'U', '\u00fa', '\u00da'], ['i', 'I', '\u00ed', '\u00cd'], ['o', 'O', '\u00f3', '\u00d3'], ['p', 'P', '\u00f6', '\u00d6'], ['[', '{', '\u00ab'], [']', '}', '\u00bb'], ['\\', '|', '\u00ac', '\u00a6']],
 				[['Caps', 'Caps'], ['a', 'A', '\u00e1', '\u00c1'], ['s', 'S', '\u00df', '\u00a7'], ['d', 'D', '\u00f0', '\u00d0'], ['f', 'F'], ['g', 'G'], ['h', 'H'], ['j', 'J'], ['k', 'K'], ['l', 'L', '\u00f8', '\u00d8'], [';', ':', '\u00b6', '\u00b0'], ['\'', '"', '\u00b4', '\u00a8'], ['Enter', 'Enter']],
@@ -1021,7 +1028,7 @@ angular.module('angular-virtual-keyboard', [])
 			],
 		'lang': ['en']
 		},
-		'Fran\u00e7ais' :{
+		'french' :{
 			'name': "French", 'keys': [
 				[["\u00b2", "\u00b3"], ["&", "1"], ["\u00e9", "2", "~"], ['"', "3", "#"], ["'", "4", "{"], ["(", "5", "["], ["-", "6", "|"], ["\u00e8", "7", "`"], ["_", "8", "\\"], ["\u00e7", "9", "^"], ["\u00e0", "0", "@"], [")", "\u00b0", "]"], ["=", "+", "}"], ["Bksp", "Bksp"]],
 				[["Tab", "Tab"], ["a", "A"], ["z", "Z"], ["e", "E", "\u20ac"], ["r", "R"], ["t", "T"], ["y", "Y"], ["u", "U"], ["i", "I"], ["o", "O"], ["p", "P"], ["^", "\u00a8"], ["$", "\u00a3", "\u00a4"], ["*", "\u03bc"]],
@@ -1063,7 +1070,7 @@ angular.module('angular-virtual-keyboard', [])
 		}
 	},
 	// DEFAULT layout
-	kt: 'US International',
+	kt: 'english',
 	i18n: {
 		'00': 'Display Number Pad',
 		'01': 'Display virtual keyboard interface',
@@ -1087,7 +1094,8 @@ angular.module('angular-virtual-keyboard', [])
 	/*globals VKI */
 	return {
 		attach: function(element, config, inputCallback) {
-			config = config || {};
+			var scope = config.$parent;
+			config = config.config || {};
 			config.i18n = config.i18n || VKI_CONFIG.i18n;
 			config.kt = config.kt || VKI_CONFIG.kt;
 			config.relative = config.relative === false ? false : VKI_CONFIG.relative;
@@ -1098,7 +1106,7 @@ angular.module('angular-virtual-keyboard', [])
 				return;
 			}
 
-			var vki = new VKI(config, VKI_CONFIG.layout, VKI_CONFIG.deadkey, inputCallback);
+			var vki = new VKI(config, VKI_CONFIG.layout, VKI_CONFIG.deadkey, inputCallback, scope);
 			vki.attachVki(element);
 		}
 	};
@@ -1130,12 +1138,7 @@ angular.module('angular-virtual-keyboard', [])
 				}
 			}
 
-			//Don't show virtualKeyabord if isEnabled is falsy;
-			if ($injector.has('isEnabled') && ! $injector.get('isEnabled') ) {
-				return;
-			}
-
-			ngVirtualKeyboardService.attach(elements[0], scope.config, function() {
+			ngVirtualKeyboardService.attach(elements[0], scope, function() {
 				$timeout(function() {
 					ngModelCtrl.$setViewValue(elements[0].value);
 				});
